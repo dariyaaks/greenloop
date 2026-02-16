@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GreenLoop — Житель</title>
+  <link rel="stylesheet" href="resident.css">
+
+  <!-- Leaflet (карта) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+</head>
+
+<body>
+  <!-- top -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand__dot" aria-hidden="true"></div>
+      <div>GreenLoop</div>
+    </div>
+    <div class="top-actions">
+      <a class="link" href="#">Житель</a>
+      <button class="pill" id="openHistoryBtn">История</button>
+    </div>
+  </header>
+
+  <!-- hero -->
+  <main class="container">
+    
+
+    <section class="card">
+      <div class="card-head">
+        <h2 class="card-title">Точки сбора и баллы</h2>
+        <p class="card-sub">Фильтруй по материалу/району/нагрузке и оформляй транзакцию начисления.</p>
+      </div>
+
+      <div class="card-body">
+        <div class="wallet" title="Баллы сохраняются локально в браузере">
+          <div>
+            <div class="label">Мои баллы</div>
+            <div class="points" id="walletPoints">0</div>
+          </div>
+          <button class="btn-ghost" id="resetBtn">Сброс</button>
+        </div>
+
+        <div class="field">
+          <label for="search">Поиск по названию</label>
+          <input id="search" placeholder="Например: Точка 7" />
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="district">Район</label>
+            <select id="district">
+              <option value="">Все районы</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="load">Нагрузка</label>
+            <select id="load">
+              <option value="">Любая</option>
+              <option value="Низкая">Низкая</option>
+              <option value="Средняя">Средняя</option>
+              <option value="Высокая">Высокая</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Материалы</label>
+          <div class="mini">Нажми на материалы, которые хочешь сдать.</div>
+          <div class="chips" id="materialChips"></div>
+        </div>
+
+        <div class="mini" id="statsBox">Загружаю точки из CSV…</div>
+
+        <div class="points-list" id="list"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- map under -->
+  <section class="map-section">
+    <div class="map-card">
+      <div class="map-head">
+        <h2>Карта точек</h2>
+        <div class="hint">Кликни по маркеру → “Сдать и получить баллы”</div>
+      </div>
+      <div id="map"></div>
+    </div>
+  </section>
+
+  <!-- TX MODAL -->
+  <div class="modal" id="txModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>Начисление баллов (транзакция)</h3>
+        <button class="x" id="closeTxBtn" aria-label="Закрыть">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="mini" id="txPointInfo">Точка: —</div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="txMaterial">Материал</label>
+            <select id="txMaterial"></select>
+          </div>
+          <div class="field">
+            <label for="txKg">Вес (кг)</label>
+            <input id="txKg" type="number" min="0" step="0.1" placeholder="например 1.5" />
+          </div>
+        </div>
+
+        <div class="mini">Правило (MVP): <b>10 баллов за 1 кг</b>.</div>
+
+        <button class="btn-main" id="confirmTxBtn">Начислить баллы</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY MODAL -->
+  <div class="modal" id="historyModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>История транзакций</h3>
+        <button class="x" id="closeHistoryBtn" aria-label="Закрыть">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="mini">Сохраняется локально в браузере (localStorage).</div>
+        <div id="historyList" style="display:grid; gap:10px;"></div>
+        <button class="btn-ghost" id="clearHistoryBtn">Очистить историю</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ---------- storage ----------
+  const LS_POINTS_KEY = "greenloop_wallet_points";
+  const LS_TX_KEY = "greenloop_transactions";
+
+  const walletEl = document.getElementById("walletPoints");
+
+  function getWalletPoints(){ return Number(localStorage.getItem(LS_POINTS_KEY) || "0"); }
+  function setWalletPoints(v){
+    localStorage.setItem(LS_POINTS_KEY, String(v));
+    walletEl.textContent = String(v);
+  }
+
+  function getTxHistory(){
+    try { return JSON.parse(localStorage.getItem(LS_TX_KEY) || "[]"); }
+    catch { return []; }
+  }
+  function setTxHistory(arr){ localStorage.setItem(LS_TX_KEY, JSON.stringify(arr)); }
+
+  setWalletPoints(getWalletPoints());
+
+  // ---------- csv parse (под твой формат) ----------
+  function parseCSV(text){
+    const lines = text.trim().split(/\r?\n/);
+    const _headers = lines[0].split(",").map(h => h.trim());
+
+    return lines.slice(1).map(line => {
+      const parts = line.split(",");
+      const point_id = parts[0]?.trim();
+      const point_name = parts[1]?.trim();
+      const district = parts[2]?.trim();
+      const latitude = Number(parts[3]);
+      const longitude = Number(parts[4]);
+      const current_load = parts[parts.length - 1]?.trim();
+      const accepted_materials = parts.slice(5, parts.length - 1).join(",").trim();
+
+      const materials = accepted_materials
+        .split(",")
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      return { point_id, point_name, district, latitude, longitude, current_load, materials };
+    });
+  }
+
+  function esc(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;");
+  }
+
+  function badgeClass(load){
+    if(load === "Высокая") return "badge b-high";
+    if(load === "Средняя") return "badge b-mid";
+    if(load === "Низкая") return "badge b-low";
+    return "badge";
+  }
+
+  // ---------- state ----------
+  let allPoints = [];
+  let filtered = [];
+  let selectedMaterials = new Set();
+
+  let map, layer;
+
+  // ---------- init ----------
+  async function init(){
+    // map
+    map = L.map("map").setView([51.17, 71.44], 11);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+    layer = L.layerGroup().addTo(map);
+
+    // load csv
+    const res = await fetch("./greenloop_points_sample.csv");
+    const text = await res.text();
+    allPoints = parseCSV(text);
+
+    buildDistrictOptions();
+    buildMaterialChips();
+    wireUI();
+    applyFilters();
+  }
+
+  function buildDistrictOptions(){
+    const sel = document.getElementById("district");
+    const districts = Array.from(new Set(allPoints.map(p => p.district))).sort();
+    districts.forEach(d => {
+      const opt = document.createElement("option");
+      opt.value = d;
+      opt.textContent = d;
+      sel.appendChild(opt);
+    });
+  }
+
+  function buildMaterialChips(){
+    const wrap = document.getElementById("materialChips");
+    wrap.innerHTML = "";
+
+    const set = new Set();
+    allPoints.forEach(p => p.materials.forEach(m => set.add(m)));
+    const materials = Array.from(set).sort((a,b)=>a.localeCompare(b,"ru"));
+
+    materials.forEach(m => {
+      const chip = document.createElement("div");
+      chip.className = "chip";
+      chip.textContent = m;
+      chip.onclick = () => {
+        if(selectedMaterials.has(m)) selectedMaterials.delete(m);
+        else selectedMaterials.add(m);
+        chip.classList.toggle("on");
+        applyFilters();
+      };
+      wrap.appendChild(chip);
+    });
+  }
+
+  function wireUI(){
+    document.getElementById("search").addEventListener("input", applyFilters);
+    document.getElementById("district").addEventListener("change", applyFilters);
+    document.getElementById("load").addEventListener("change", applyFilters);
+
+    document.getElementById("resetBtn").onclick = () => {
+      document.getElementById("search").value = "";
+      document.getElementById("district").value = "";
+      document.getElementById("load").value = "";
+      selectedMaterials.clear();
+      document.querySelectorAll(".chip").forEach(c => c.classList.remove("on"));
+      applyFilters();
+    };
+
+    // modals
+    const txModal = document.getElementById("txModal");
+    const historyModal = document.getElementById("historyModal");
+
+    document.getElementById("closeTxBtn").onclick = () => txModal.classList.remove("open");
+    txModal.addEventListener("click", (e)=>{ if(e.target === txModal) txModal.classList.remove("open"); });
+
+    document.getElementById("openHistoryBtn").onclick = () => {
+      renderHistory();
+      historyModal.classList.add("open");
+    };
+    document.getElementById("closeHistoryBtn").onclick = () => historyModal.classList.remove("open");
+    historyModal.addEventListener("click", (e)=>{ if(e.target === historyModal) historyModal.classList.remove("open"); });
+
+    document.getElementById("clearHistoryBtn").onclick = () => {
+      setTxHistory([]);
+      setWalletPoints(0);
+      renderHistory();
+    };
+  }
+
+  function applyFilters(){
+    const q = document.getElementById("search").value.trim().toLowerCase();
+    const district = document.getElementById("district").value;
+    const load = document.getElementById("load").value;
+
+    filtered = allPoints.filter(p => {
+      const okName = !q || (p.point_name||"").toLowerCase().includes(q) || (p.point_id||"").toLowerCase().includes(q);
+      const okDistrict = !district || p.district === district;
+      const okLoad = !load || p.current_load === load;
+
+      // точка должна принимать все выбранные материалы
+      const okMats = selectedMaterials.size === 0 ||
+        Array.from(selectedMaterials).every(m => p.materials.includes(m));
+
+      return okName && okDistrict && okLoad && okMats;
+    });
+
+    document.getElementById("statsBox").textContent =
+      `Найдено точек: ${filtered.length} из ${allPoints.length}` +
+      (selectedMaterials.size ? ` • Материалы: ${Array.from(selectedMaterials).join(", ")}` : "");
+
+    renderList();
+    renderMap();
+  }
+
+  function renderList(){
+    const el = document.getElementById("list");
+    el.innerHTML = "";
+
+    if(filtered.length === 0){
+      el.innerHTML = `<div class="mini">Ничего не найдено. Сними часть фильтров или выбери другой материал.</div>`;
+      return;
+    }
+
+    filtered.slice(0, 15).forEach(p => {
+      const div = document.createElement("div");
+      div.className = "point";
+      div.innerHTML = `
+        <div class="point-top">
+          <div>
+            <p class="point-name">${esc(p.point_name)} <span style="color:var(--muted); font-weight:900;">(${esc(p.point_id)})</span></p>
+            <div class="point-meta">${esc(p.district)} • ${p.latitude.toFixed(6)}, ${p.longitude.toFixed(6)}</div>
+          </div>
+          <div class="${badgeClass(p.current_load)}">${esc(p.current_load)}</div>
+        </div>
+
+        <div class="tags">
+          ${p.materials.map(m=>`<span class="tag">${esc(m)}</span>`).join("")}
+        </div>
+
+        <div class="point-actions">
+          <button class="btn-small" data-center>Показать</button>
+          <button class="btn-small main" data-tx>Сдать</button>
+        </div>
+      `;
+
+      div.querySelector("[data-center]").onclick = () => map.setView([p.latitude, p.longitude], 15);
+      div.querySelector("[data-tx]").onclick = () => openTx(p.point_id);
+
+      el.appendChild(div);
+    });
+  }
+
+  function renderMap(){
+    layer.clearLayers();
+
+    const bounds = [];
+    filtered.forEach(p => {
+      if(!Number.isFinite(p.latitude) || !Number.isFinite(p.longitude)) return;
+
+      const popup = `
+        <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; line-height:1.35;">
+          <b>${esc(p.point_name)} (${esc(p.point_id)})</b><br/>
+          <span style="color:#6f7a70; font-size:12px; font-weight:700;">
+            ${esc(p.district)} • Нагрузка: ${esc(p.current_load)}
+          </span><br/>
+          <div style="margin:8px 0; font-size:12px;">
+            <b>Материалы:</b> ${esc(p.materials.join(", "))}
+          </div>
+          <button
+            style="padding:10px 12px;border-radius:12px;border:0;background:linear-gradient(180deg,#7aa64a,#6f8f3d);color:white;font-weight:900;cursor:pointer;"
+            onclick="window.__openTx('${p.point_id}')"
+          >Сдать и получить баллы</button>
+        </div>
+      `;
+
+      const m = L.marker([p.latitude, p.longitude]).bindPopup(popup);
+      m.addTo(layer);
+      bounds.push([p.latitude, p.longitude]);
+    });
+
+    if(bounds.length) map.fitBounds(bounds, { padding:[24,24] });
+  }
+
+  // expose for popup
+  window.__openTx = (id) => openTx(id);
+
+  function openTx(pointId){
+    const p = allPoints.find(x => x.point_id === pointId);
+    if(!p) return;
+
+    document.getElementById("txPointInfo").innerHTML =
+      `Точка: <b>${esc(p.point_name)}</b> (${esc(p.point_id)}), ${esc(p.district)}.`;
+
+    const sel = document.getElementById("txMaterial");
+    sel.innerHTML = "";
+    p.materials.forEach(m=>{
+      const opt = document.createElement("option");
+      opt.value = m;
+      opt.textContent = m;
+      sel.appendChild(opt);
+    });
+
+    document.getElementById("txKg").value = "";
+
+    const modal = document.getElementById("txModal");
+    modal.classList.add("open");
+
+    document.getElementById("confirmTxBtn").onclick = () => {
+      const material = sel.value;
+      const kg = Number(document.getElementById("txKg").value);
+      if(!Number.isFinite(kg) || kg <= 0){
+        alert("Введите вес (кг), больше нуля.");
+        return;
+      }
+
+      const rate = 10; // MVP
+      const earned = Math.round(kg * rate);
+
+      setWalletPoints(getWalletPoints() + earned);
+
+      const history = getTxHistory();
+      history.unshift({
+        id: crypto.randomUUID?.() || String(Date.now()),
+        ts: new Date().toISOString(),
+        point_id: p.point_id,
+        point_name: p.point_name,
+        district: p.district,
+        material,
+        kg,
+        earned
+      });
+      setTxHistory(history);
+
+      modal.classList.remove("open");
+      alert(`Готово! Начислено ${earned} баллов.`);
+    };
+  }
+
+  function renderHistory(){
+    const el = document.getElementById("historyList");
+    const history = getTxHistory();
+    el.innerHTML = "";
+
+    if(history.length === 0){
+      el.innerHTML = `<div class="mini">История пустая. Сделай первую сдачу 🙂</div>`;
+      return;
+    }
+
+    history.slice(0, 40).forEach(tx=>{
+      const d = new Date(tx.ts);
+      const item = document.createElement("div");
+      item.className = "point";
+      item.innerHTML = `
+        <div class="point-top">
+          <div>
+            <p class="point-name">${esc(tx.point_name)} <span style="color:var(--muted); font-weight:900;">(${esc(tx.point_id)})</span></p>
+            <div class="point-meta">${esc(tx.district)} • ${d.toLocaleString("ru-RU")}</div>
+          </div>
+          <div class="badge">${esc(tx.earned)} баллов</div>
+        </div>
+        <div class="point-meta"><b>Материал:</b> ${esc(tx.material)} • <b>Вес:</b> ${tx.kg} кг</div>
+      `;
+      el.appendChild(item);
+    });
+  }
+
+  init().catch(err=>{
+    console.error(err);
+    document.getElementById("statsBox").textContent =
+      "Не удалось загрузить CSV. Проверь, что greenloop_points_sample.csv лежит рядом с resident.html и запускай через локальный сервер.";
+  });
+</script>
+</body>
+</html>

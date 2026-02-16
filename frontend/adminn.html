@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GreenLoop — Админ</title>
+  <link rel="stylesheet" href="adminn.css" />
+</head>
+<body>
+
+<div class="layout">
+
+
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="dot"></span>
+      <span class="name">GreenLoop</span>
+    </div>
+
+    <nav class="menu">
+      <a class="item active" href="#">Точки (админ)</a>
+      <a class="item" href="#">Материалы</a>
+      <a class="item" href="#">Партнёры</a>
+      <a class="item" href="#">Транзакции</a>
+    </nav>
+
+    <button class="logout" type="button">Выйти</button>
+  </aside>
+
+  
+  <main class="main">
+
+    
+    <header class="topbar">
+      <div class="left">
+        <div class="title">Панель администратора</div>
+        <div class="subtitle">Управление точками сбора и базовая статистика</div>
+      </div>
+
+      <div class="admin">
+        <span class="avatar"></span>
+        <div>
+          <div class="admin-name">Admin</div>
+          <div class="admin-role">роль: администратор</div>
+        </div>
+      </div>
+    </header>
+
+   
+    <section class="cards">
+      <div class="card">
+        <div class="label">Всего точек</div>
+        <div class="value">25</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Точек с высокой нагрузкой</div>
+        <div class="value">6</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Материалов в системе</div>
+        <div class="value">5</div>
+      </div>
+    </section>
+
+   
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="h">Управление точками</div>
+          <div class="sub">Фильтруй по нагрузке и материалам, редактируй точки.</div>
+        </div>
+
+        <button class="btn" type="button">+ Добавить точку</button>
+      </div>
+
+      
+      <div class="filters">
+        <div class="field">
+          <label>Поиск</label>
+          <input type="text" placeholder="Например: Точка 7 или P007" />
+        </div>
+
+        <div class="field">
+          <label>Нагрузка</label>
+          <select>
+            <option>Любая</option>
+            <option>Низкая</option>
+            <option>Средняя</option>
+            <option>Высокая</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Материал</label>
+          <select>
+            <option>Любой</option>
+            <option>Бумага</option>
+            <option>Пластик</option>
+            <option>Стекло</option>
+            <option>Металл</option>
+            <option>Электроника</option>
+          </select>
+        </div>
+
+        <button class="btn ghost" type="button">Сброс</button>
+      </div>
+
+      
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Точка</th>
+              <th>Район</th>
+              <th>Материалы</th>
+              <th>Нагрузка</th>
+              <th>Статус</th>
+              <th style="width:160px;">Действия</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>
+                <div class="tname">Точка 1 <span class="code">(P001)</span></div>
+                <div class="coords">51.231556, 71.402243</div>
+              </td>
+              <td>Район 5</td>
+              <td>
+                <span class="tag">Пластик</span>
+                <span class="tag">Электроника</span>
+              </td>
+              <td><span class="load high">Высокая</span></td>
+              <td><span class="status open">Открыта</span></td>
+              <td>
+                <button class="small">Редактировать</button>
+                <button class="small danger">Скрыть</button>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="tname">Точка 2 <span class="code">(P002)</span></div>
+                <div class="coords">51.165185, 71.495709</div>
+              </td>
+              <td>Район 3</td>
+              <td>
+                <span class="tag">Стекло</span>
+                <span class="tag">Бумага</span>
+              </td>
+              <td><span class="load mid">Средняя</span></td>
+              <td><span class="status open">Открыта</span></td>
+              <td>
+                <button class="small">Редактировать</button>
+                <button class="small danger">Скрыть</button>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="tname">Точка 3 <span class="code">(P003)</span></div>
+                <div class="coords">51.100010, 71.420000</div>
+              </td>
+              <td>Район 1</td>
+              <td>
+                <span class="tag">Металл</span>
+                <span class="tag">Пластик</span>
+                <span class="tag">Стекло</span>
+              </td>
+              <td><span class="load low">Низкая</span></td>
+              <td><span class="status closed">Закрыта</span></td>
+              <td>
+                <button class="small">Редактировать</button>
+                <button class="small danger">Скрыть</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+     
+      
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Добро пожаловать</title>
+  <link rel="stylesheet" href="login.css" />
+
+</head>
+
+<body>
+  
+  <header class="topbar">
+    <div class="topbar__spacer"></div>
+
+    <nav class="topbar__nav">
+      <a class="topbar__link is-active" href="#">Вход</a>
+      <a class="topbar__btn" href="#">Регистрация</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div class="hero__left">
+        <h1 class="hero__title">
+          Добро пожаловать<br>в наше сообщество
+        </h1>
+  
+        <p class="hero__subtitle">
+          Начните свой путь вместе с нами и присоединяйтесь к сообществу
+        </p>
+  
+        <img 
+        src="rocket.png" 
+        alt="Иллюстрация ракеты" 
+        class="hero__image"
+        />
+      </div>
+
+      <div class="hero__right">
+        <form class="card" action="#" method="post">
+          <label class="field">
+            <span class="field__label">Электронная почта</span>
+            <input id="email" class="field__input" type="email" placeholder="Введите email" required />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Пароль</span>
+            <input id="password" class="field__input" type="password" placeholder="Введите пароль" required />
+          </label>
+
+          <div class="row">
+            <label class="check">
+              <input type="checkbox" />
+              <span>Запомнить меня</span>
+            </label>
+
+            <a class="link" href="#">Забыли пароль?</a>
+          </div>
+
+          <button id="loginBtn" class="btn-primary" type="button">ВОЙТИ</button>
+
+          <div class="divider">
+            <span>или войти через</span>
+          </div>
+
+          <div class="social">
+            <button class="social__btn" type="button" aria-label="Google">G</button>
+            <button class="social__btn" type="button" aria-label="Apple"></button>
+            <button class="social__btn" type="button" aria-label="Facebook">f</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>
+
+<script>
+  console.log("login script loaded");
+
+  const loginBtn = document.getElementById("loginBtn");
+  console.log("loginBtn:", loginBtn);
+
+  loginBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    console.log("clicked");
+
+    try {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      console.log("sending login for:", email);
+
+      const res = await fetch("http://localhost:3001/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+      console.log("status:", res.status, "data:", data);
+
+      if (!res.ok) {
+        alert(data.message || "Ошибка входа");
+        return;
+      }
+
+      
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.user.role);
+
+      
+      const role = data.user.role;
+      const page =
+        role === "admin" ? "./admin.html" :
+        role === "partner" ? "./partner.html" :
+        "./resident.html";
+
+      console.log("redirect to:", page);
+      window.location.assign(page);
+
+    } catch (err) {
+      console.error(err);
+      alert("Ошибка в JS. Открой Console (F12).");
+    }
+  });
+</script>
+
+</body>
+</html>

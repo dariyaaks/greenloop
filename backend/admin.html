@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GreenLoop — Админ</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+
+<body>
+
+  <div class="bg" aria-hidden="true">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+    <span class="mesh"></span>
+  </div>
+
+  <div class="app">
+    
+    <aside class="sidebar">
+      <div class="side-head">
+        <div class="brand">
+          <span class="dot"></span>
+          <span class="brand-name">GreenLoop</span>
+        </div>
+        <div class="role">Администратор</div>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-item is-active" href="#">
+          <span class="ico">▦</span>
+          <span>Дашборд</span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="ico">👥</span>
+          <span>Пользователи</span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="ico">📍</span>
+          <span>Точки сбора</span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="ico">🎁</span>
+          <span>Награды</span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="ico">🤝</span>
+          <span>Партнёры</span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="ico">🧾</span>
+          <span>Транзакции</span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="ico">⚙️</span>
+          <span>Настройки</span>
+        </a>
+      </nav>
+
+      <div class="side-foot">
+        <button class="btn btn-ghost" type="button">Выйти</button>
+        <div class="small">v0.1 • GreenLoop</div>
+      </div>
+    </aside>
+
+    
+    <main class="main">
+     
+      <header class="topbar">
+        <div class="search">
+          <span class="search-ico">🔎</span>
+          <input type="search" placeholder="Быстрый поиск (пользователь, точка, партнёр)..." />
+        </div>
+
+        <div class="top-actions">
+          <button class="btn btn-ghost" type="button">+ Добавить виджет</button>
+
+          <button class="icon-btn" type="button" aria-label="Уведомления">
+            🔔
+            <span class="badge-dot" aria-hidden="true"></span>
+          </button>
+
+          <div class="profile">
+            <span class="avatar" aria-hidden="true"></span>
+            <div class="profile-meta">
+              <div class="name">Admin 1</div>
+              <div class="muted">Суперадмин</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      
+      <section class="content">
+        
+        <div class="kpi-grid">
+          <div class="card kpi">
+            <div class="kpi-title">Сдач сегодня</div>
+            <div class="kpi-value">128</div>
+            <div class="kpi-sub">+12% к вчера</div>
+          </div>
+          <div class="card kpi">
+            <div class="kpi-title">Начислено баллов</div>
+            <div class="kpi-value">4 960</div>
+            <div class="kpi-sub">по подтверждённым сдачам</div>
+          </div>
+          <div class="card kpi">
+            <div class="kpi-title">Списано баллов</div>
+            <div class="kpi-value">2 140</div>
+            <div class="kpi-sub">наград выдано: 37</div>
+          </div>
+          <div class="card kpi">
+            <div class="kpi-title">Активные партнёры</div>
+            <div class="kpi-value">18</div>
+            <div class="kpi-sub">новых за неделю: 2</div>
+          </div>
+        </div>
+
+        
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <div class="card-title">Самые активные районы</div>
+                <div class="card-sub">Динамика сдач по районам (пример)</div>
+              </div>
+              <div class="chips">
+                <button class="chip is-active" type="button">Неделя</button>
+                <button class="chip" type="button">Месяц</button>
+                <button class="chip" type="button">Год</button>
+              </div>
+            </div>
+
+            <div class="chart-placeholder">
+              <div class="chart-grid">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <div class="chart-lines">
+                <div class="line l1"></div>
+                <div class="line l2"></div>
+                <div class="line l3"></div>
+              </div>
+              <div class="chart-legend">
+                <span class="legend-item"><i class="dot d1"></i> Район 1</span>
+                <span class="legend-item"><i class="dot d2"></i> Район 5</span>
+                <span class="legend-item"><i class="dot d3"></i> Район 7</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <div class="card-title">Статистика материалов</div>
+                <div class="card-sub">Доля материалов за период (пример)</div>
+              </div>
+              <div class="date-pill">14.02.2026</div>
+            </div>
+
+            <div class="donut">
+              <div class="donut-ring" aria-hidden="true"></div>
+              <div class="donut-center">
+                <div class="donut-date">14.02.2026</div>
+                <div class="donut-note muted">всего: 707</div>
+              </div>
+            </div>
+
+            <div class="legend">
+              <span><i class="dot d1"></i> стекло</span>
+              <span><i class="dot d2"></i> электроника</span>
+              <span><i class="dot d3"></i> пластик</span>
+              <span><i class="dot d4"></i> бумага</span>
+              <span><i class="dot d5"></i> металл</span>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <div class="card-title">Фильтры</div>
+                <div class="card-sub">Быстро отфильтруй данные в таблице</div>
+              </div>
+              <button class="btn btn-ghost" type="button">Очистить</button>
+            </div>
+
+            <div class="filter">
+              <div class="filter-block">
+                <div class="filter-title">Районы</div>
+                <label class="check"><input type="checkbox" checked> Район 1</label>
+                <label class="check"><input type="checkbox"> Район 2</label>
+                <label class="check"><input type="checkbox"> Район 3</label>
+                <label class="check"><input type="checkbox" checked> Район 4</label>
+                <label class="check"><input type="checkbox"> Все районы</label>
+              </div>
+
+              <div class="filter-block">
+                <div class="filter-title">Материалы</div>
+                <label class="check"><input type="checkbox" checked> пластик</label>
+                <label class="check"><input type="checkbox"> стекло</label>
+                <label class="check"><input type="checkbox"> бумага</label>
+                <label class="check"><input type="checkbox"> металл</label>
+                <label class="check"><input type="checkbox"> электроника</label>
+              </div>
+
+              <div class="filter-block">
+                <div class="filter-title">Партнёры</div>
+                <label class="check"><input type="checkbox"> Кофейня</label>
+                <label class="check"><input type="checkbox" checked> Магазин</label>
+                <label class="check"><input type="checkbox"> Кино</label>
+                <label class="check"><input type="checkbox"> Транспорт</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <div class="card-title">Последние операции</div>
+                <div class="card-sub">Найдено: <b>110</b></div>
+              </div>
+
+              <button class="btn" type="button">Экспорт в Excel</button>
+            </div>
+
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Пользователь</th>
+                    <th>Роль</th>
+                    <th>Материал</th>
+                    <th>Баллы</th>
+                    <th>Дата</th>
+                    <th>Статус</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Алия С.</td>
+                    <td>Житель</td>
+                    <td>Пластик</td>
+                    <td>+40</td>
+                    <td>16.02.2026</td>
+                    <td><span class="status ok">Подтверждено</span></td>
+                  </tr>
+                  <tr>
+                    <td>Точка P-002</td>
+                    <td>Точка сбора</td>
+                    <td>Стекло</td>
+                    <td>+25</td>
+                    <td>16.02.2026</td>
+                    <td><span class="status wait">На проверке</span></td>
+                  </tr>
+                  <tr>
+                    <td>Partner: Coffee+</td>
+                    <td>Партнёр</td>
+                    <td>Награда</td>
+                    <td>-120</td>
+                    <td>16.02.2026</td>
+                    <td><span class="status ok">Списано</span></td>
+                  </tr>
+                  <tr>
+                    <td>Нуржан А.</td>
+                    <td>Житель</td>
+                    <td>Электроника</td>
+                    <td>+90</td>
+                    <td>15.02.2026</td>
+                    <td><span class="status bad">Отклонено</span></td>
+                  </tr>
+                  <tr>
+                    <td>Точка P-011</td>
+                    <td>Точка сбора</td>
+                    <td>Бумага</td>
+                    <td>+15</td>
+                    <td>15.02.2026</td>
+                    <td><span class="status ok">Подтверждено</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pagination">
+              <button class="page-btn" type="button">←</button>
+              <button class="page-btn is-active" type="button">1</button>
+              <button class="page-btn" type="button">2</button>
+              <button class="page-btn" type="button">3</button>
+              <span class="muted">…</span>
+              <button class="page-btn" type="button">31</button>
+              <button class="page-btn" type="button">→</button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+</body>
+</html>

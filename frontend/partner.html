@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GreenLoop — Партнёр</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <span class="brand-name">GreenLoop</span>
+    </div>
+
+    <div class="top-actions">
+      <span class="role">Партнёр</span>
+      <button class="pill">История</button>
+    </div>
+  </header>
+
+  <main class="layout">
+  
+    <section class="card">
+      <h1 class="card-title">Интерфейс партнёра</h1>
+      <p class="card-subtitle">
+        Создавай награды и подтверждай списание баллов по QR-ID пользователя.
+      </p>
+
+      
+      <div class="chips">
+        <button class="chip chip--active" type="button">Награды</button>
+        <button class="chip" type="button">Списание</button>
+        <button class="chip" type="button">QR</button>
+      </div>
+
+      
+      <div class="block">
+        <div class="block-head">
+          <h2 class="block-title">Создание награды</h2>
+          <span class="badge badge--green">Партнёр</span>
+        </div>
+
+        <div class="grid-2">
+          <label class="field">
+            <span class="label">Название</span>
+            <input class="input" type="text" placeholder="Напр.: Скидка 10%" />
+          </label>
+
+          <label class="field">
+            <span class="label">Стоимость (баллы)</span>
+            <input class="input" type="number" min="0" placeholder="Напр.: 100" />
+          </label>
+        </div>
+
+        <label class="field">
+          <span class="label">Описание</span>
+          <input class="input" type="text" placeholder="Коротко: условия, сроки, ограничения" />
+        </label>
+
+        <div class="row"><button class="btn btn--small btn--primary" type="button">Подтвердить</button>
+            <button class="btn btn--small btn--ghost" type="button">Отклонить</button>
+          </div>
+        </div>
+
+        <div class="request">
+          <div class="request-top">
+            <div>
+              <div class="request-title">Заявка #R-002</div>
+              <div class="request-meta">QR-ID: U-120041 • Награда: “Напиток”</div>
+            </div>
+            <span class="pill-status pill-status--ok">Подтверждено</span>
+          </div>
+        </div>
+
+        <div class="request">
+          <div class="request-top">
+            <div>
+              <div class="request-title">Заявка #R-003</div>
+              <div class="request-meta">QR-ID: U-778811 • Награда: “Подарок”</div>
+            </div>
+            <span class="pill-status pill-status--bad">Отклонено</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+    <aside class="right">
+      <div class="right-card">
+        <h2 class="right-title">QR-код / QR-ID</h2>
+
+        <div class="qr-wrap">
+          <div class="qr-fake" aria-hidden="true"></div>
+        </div>
+
+        <div class="qr-id">
+          <span class="muted">QR-ID:</span>
+          <span class="strong">U-459203</span>
+        </div>
+
+        <div class="row">
+          <button class="btn btn--primary" type="button">Сгенерировать QR</button>
+          <button class="btn btn--ghost" type="button">Скопировать ID</button>
+        </div>
+
+        
+      </div>
+    </aside>
+  </main>
+</body>
+</html>
