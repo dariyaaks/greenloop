@@ -1,129 +1,113 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Добро пожаловать</title>
-  <link rel="stylesheet" href="login.css" />
-
+  <meta charset="UTF-8">
+  <title>Вход</title>
+  <link rel="stylesheet" href="login.css">
 </head>
 
 <body>
-  
-  <header class="topbar">
-    <div class="topbar__spacer"></div>
 
-    <nav class="topbar__nav">
-      <a class="topbar__link is-active" href="#">Вход</a>
-      <a class="topbar__btn" href="#">Регистрация</a>
-    </nav>
-  </header>
+<header class="topbar">
+  <div></div>
+  <div class="nav">
+    <a href="#" class="active">Вход</a>
+    <a href="#" class="register">Регистрация</a>
+  </div>
+</header>
 
-  <main class="page">
-    <section class="hero">
-      <div class="hero__left">
-        <h1 class="hero__title">
-          Добро пожаловать<br>в наше сообщество
-        </h1>
-  
-        <p class="hero__subtitle">
-          Начните свой путь вместе с нами и присоединяйтесь к сообществу
-        </p>
-  
-        <img 
-        src="rocket.png" 
-        alt="Иллюстрация ракеты" 
-        class="hero__image"
-        />
-      </div>
+<main class="page">
+  <section class="hero">
 
-      <div class="hero__right">
-        <form class="card" action="#" method="post">
-          <label class="field">
-            <span class="field__label">Электронная почта</span>
-            <input id="email" class="field__input" type="email" placeholder="Введите email" required />
+    <div class="left">
+      <h1>Добро пожаловать<br>в наше сообщество</h1>
+
+      <p>
+        Начните свой путь вместе с нами и присоединяйтесь к сообществу
+      </p>
+
+      <img src="rocket.png" alt="Ракета" class="image">
+    </div>
+
+    <div class="right">
+      <div class="card">
+
+        <label>
+          <span>Email</span>
+          <input type="email" id="email" placeholder="Введите email">
+        </label>
+
+        <label>
+          <span>Пароль</span>
+          <input type="password" id="password" placeholder="Введите пароль">
+        </label>
+
+        <div class="row">
+          <label>
+            <input id="check" type="checkbox"> Запомнить меня
           </label>
+          <a href="#">Забыли пароль?</a>
+        </div>
 
-          <label class="field">
-            <span class="field__label">Пароль</span>
-            <input id="password" class="field__input" type="password" placeholder="Введите пароль" required />
-          </label>
+        <button id="loginBtn" class="btn">ВОЙТИ</button>
 
-          <div class="row">
-            <label class="check">
-              <input type="checkbox" />
-              <span>Запомнить меня</span>
-            </label>
+        <div class="divider">или войти через</div>
 
-            <a class="link" href="#">Забыли пароль?</a>
-          </div>
+        <div class="social">
+          <button>G</button>
+          <button></button>
+          <button>f</button>
+        </div>
 
-          <button id="loginBtn" class="btn-primary" type="button">ВОЙТИ</button>
-
-          <div class="divider">
-            <span>или войти через</span>
-          </div>
-
-          <div class="social">
-            <button class="social__btn" type="button" aria-label="Google">G</button>
-            <button class="social__btn" type="button" aria-label="Apple"></button>
-            <button class="social__btn" type="button" aria-label="Facebook">f</button>
-          </div>
-        </form>
       </div>
-    </section>
-  </main>
-</body>
+    </div>
+
+  </section>
+</main>
 
 <script>
-  console.log("login script loaded");
+const btn = document.getElementById("loginBtn");
 
-  const loginBtn = document.getElementById("loginBtn");
-  console.log("loginBtn:", loginBtn);
+btn.addEventListener("click", async () => {
 
-  loginBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
-    console.log("clicked");
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
 
-    try {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+  if (!email || !password) {
+    alert("Введите данные");
+    return;
+  }
 
-      console.log("sending login for:", email);
+  try {
+    const response = await fetch("http://localhost:3001/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
 
-      const res = await fetch("http://localhost:3001/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
+    const data = await response.json();
 
-      const data = await res.json();
-      console.log("status:", res.status, "data:", data);
-
-      if (!res.ok) {
-        alert(data.message || "Ошибка входа");
-        return;
-      }
-
-      
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("role", data.user.role);
-
-      
-      const role = data.user.role;
-      const page =
-        role === "admin" ? "./admin.html" :
-        role === "partner" ? "./partner.html" :
-        "./resident.html";
-
-      console.log("redirect to:", page);
-      window.location.assign(page);
-
-    } catch (err) {
-      console.error(err);
-      alert("Ошибка в JS. Открой Console (F12).");
+    if (!response.ok) {
+      alert(data.message || "Ошибка входа");
+      return;
     }
-  });
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("role", data.user.role);
+
+    if (data.user.role === "admin") {
+      window.location = "admin.html";
+    } else if (data.user.role === "partner") {
+      window.location = "partner.html";
+    } else {
+      window.location = "resident.html";
+    }
+
+  } catch (error) {
+    alert("Ошибка соединения с сервером");
+  }
+
+});
 </script>
 
 </body>
