@@ -111,9 +111,6 @@ app.post("/api/auth/login", async (req, res) => {
   if (!ok) return res.status(401).json({ message: "Invalid credentials" });
 
   if (user.status === "blocked") return res.status(403).json({ message: "User blocked" });
-  if (user.role === "partner" && user.status === "pending") {
-    return res.status(403).json({ message: "Partner pending approval" });
-  }
 
   const safeUser = { id: user.id, email: user.email, role: user.role, status: user.status, created_at: user.created_at };
   const token = signToken(safeUser);

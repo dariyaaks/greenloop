@@ -6,7 +6,6 @@
   <title>GreenLoop — Житель</title>
   <link rel="stylesheet" href="resident.css">
 
-  <!-- Leaflet (карта) -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -21,7 +20,6 @@
 </head>
 
 <body>
-  <!-- top -->
   <header class="topbar">
     <div class="brand">
       <div class="brand__dot" aria-hidden="true"></div>
@@ -33,7 +31,6 @@
     </div>
   </header>
 
-  <!-- hero -->
   <main class="container">
     
 
@@ -89,7 +86,6 @@
     </section>
   </main>
 
-  <!-- map under -->
   <section class="map-section">
     <div class="map-card">
       <div class="map-head">
@@ -100,7 +96,6 @@
     </div>
   </section>
 
-  <!-- TX MODAL -->
   <div class="modal" id="txModal" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-head">
@@ -128,7 +123,6 @@
     </div>
   </div>
 
-  <!-- HISTORY MODAL -->
   <div class="modal" id="historyModal" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-head">
@@ -144,7 +138,6 @@
   </div>
 
 <script>
-  // ---------- storage ----------
   const LS_POINTS_KEY = "greenloop_wallet_points";
   const LS_TX_KEY = "greenloop_transactions";
 
@@ -164,7 +157,6 @@
 
   setWalletPoints(getWalletPoints());
 
-  // ---------- csv parse (под твой формат) ----------
   function parseCSV(text){
     const lines = text.trim().split(/\r?\n/);
     const _headers = lines[0].split(",").map(h => h.trim());
@@ -203,16 +195,13 @@
     return "badge";
   }
 
-  // ---------- state ----------
   let allPoints = [];
   let filtered = [];
   let selectedMaterials = new Set();
 
   let map, layer;
 
-  // ---------- init ----------
   async function init(){
-    // map
     map = L.map("map").setView([51.17, 71.44], 11);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
@@ -220,7 +209,6 @@
     }).addTo(map);
     layer = L.layerGroup().addTo(map);
 
-    // load csv
     const res = await fetch("./greenloop_points_sample.csv");
     const text = await res.text();
     allPoints = parseCSV(text);
@@ -278,7 +266,6 @@
       applyFilters();
     };
 
-    // modals
     const txModal = document.getElementById("txModal");
     const historyModal = document.getElementById("historyModal");
 
@@ -309,7 +296,6 @@
       const okDistrict = !district || p.district === district;
       const okLoad = !load || p.current_load === load;
 
-      // точка должна принимать все выбранные материалы
       const okMats = selectedMaterials.size === 0 ||
         Array.from(selectedMaterials).every(m => p.materials.includes(m));
 
@@ -393,7 +379,6 @@
     if(bounds.length) map.fitBounds(bounds, { padding:[24,24] });
   }
 
-  // expose for popup
   window.__openTx = (id) => openTx(id);
 
   function openTx(pointId){
@@ -425,7 +410,7 @@
         return;
       }
 
-      const rate = 10; // MVP
+      const rate = 10;
       const earned = Math.round(kg * rate);
 
       setWalletPoints(getWalletPoints() + earned);

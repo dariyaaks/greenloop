@@ -66,49 +66,53 @@
 </main>
 
 <script>
-const btn = document.getElementById("loginBtn");
-
-btn.addEventListener("click", async () => {
-
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  if (!email || !password) {
-    alert("Введите данные");
-    return;
-  }
-
-  try {
-    const response = await fetch("http://localhost:3001/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      alert(data.message || "Ошибка входа");
+  const btn = document.getElementById("loginBtn");
+  
+  btn.addEventListener("click", async (e) => {
+    e.preventDefault(); // на всякий случай, если кнопка внутри form
+  
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+  
+    if (!email || !password) {
+      alert("Введите данные");
       return;
     }
-
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("role", data.user.role);
-
-    if (data.user.role === "admin") {
-      window.location = "admin.html";
-    } else if (data.user.role === "partner") {
-      window.location = "partner.html";
-    } else {
-      window.location = "resident.html";
+  
+    try {
+      const response = await fetch("http://localhost:3001/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+  
+      const data = await response.json();
+  
+      console.log("LOGIN:", data); // можешь потом убрать
+  
+      if (!response.ok) {
+        alert(data.message || "Ошибка входа");
+        return;
+      }
+  
+      const role = (data?.user?.role || "").toLowerCase().trim();
+  
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", role);
+  
+      if (role === "admin") {
+        window.location.href = "admin.html";
+      } else if (role === "partner") {
+        window.location.href = "partner.html";
+      } else {
+        window.location.href = "resident.html";
+      }
+  
+    } catch (error) {
+      alert("Ошибка соединения с сервером");
     }
-
-  } catch (error) {
-    alert("Ошибка соединения с сервером");
-  }
-
-});
-</script>
+  });
+  </script>
 
 </body>
 </html>
